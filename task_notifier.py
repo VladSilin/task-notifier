@@ -2,18 +2,18 @@
 
 Usage:
   task_notifier.py start
-  service-monitor.py stop
+  task_notifier.py stop
 
 """
 
 import os
 import sys
+import time
+
 import schedule
 from docopt import docopt
 
-
-def send_email(sender, recipient, subject, body):
-    print 'Sending email.'
+from gmail import send_email
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Task Notifier 1.0')
@@ -27,4 +27,16 @@ if __name__ == '__main__':
             print >> sys.stderr, 'Process fork failed %d - %s' % (e.errno, e.strerror)
             sys.exit(1)
 
-    schedule.every(10).minutes.do(send_email);
+        sender = ''
+        recipient = ''
+        subject = ''
+        email_body = """
+        Hello World!
+        """
+
+        schedule.every(1).minutes.do(
+            lambda: send_email(sender, recipient, subject, email_body))
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
